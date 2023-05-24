@@ -14,7 +14,8 @@
       deployment_name: ""
       filter: "{{ filter }}"
       filter_value: "{{ filter_value }}"
-      cli_template: "{{ cli_template }}"
+      project_name: "{{ project_name }}"
+      template_name: "{{ template_name }}"
       device_inventory: "{{ device_inventory }}"
       device_deployment_status: []
       dnac_login:
@@ -53,18 +54,18 @@
 
       - name: Update templates folder from the GitHub repo
         git:
-          repo: https://github.com/zapodeanu/dnacenter_day_n_templates.git
-          dest: /Users/gzapodea/PythonCode/dnacenter_day_n_templates
+          repo: https://github.com/zapodeanu/dnacenter_gitops_deployment_templates.git
+          dest: /Users/gzapodea/PythonCode/dnacenter_gitops_deployment_templates
           update: yes
           force: yes
 
       - name: Include the new downloaded vars file
         include_vars:
-          dir: /Users/gzapodea/PythonCode/dnacenter_day_n_templates/
+          dir: /Users/gzapodea/PythonCode/dnacenter_gitops_deployment_templates/
           files_matching: "{{ deployment_name }}"
 
-      # include tasks to create a new project, template
-      - include_tasks: create_template_tasks.yaml
+      # include tasks to version the template
+      - include_tasks: version_template_tasks.yaml
 
       - name: Print filter info to select devices to be configured with the CLI Template
         ansible.builtin.debug:
