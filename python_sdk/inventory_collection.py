@@ -86,7 +86,7 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     current_time = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-    logging.info('App "inventory_collection_sdk.py" Start, ' + current_time)
+    logging.info(' App "inventory_collection.py" Start, ' + current_time)
 
     # create a DNACenterAPI "Connection Object" to use the Python SDK
     dnac_api = DNACenterAPI(username=DNAC_USER, password=DNAC_PASS, base_url=DNAC_URL, version='2.3.5.3',
@@ -95,7 +95,7 @@ def main():
     # get the device count
     response = dnac_api.devices.get_device_count()
     device_count = response['response']
-    logging.info('Number of devices managed by Cisco DNA Center: ' + str(device_count))
+    logging.info(' Number of devices managed by Cisco DNA Center: ' + str(device_count))
 
     # get the device info list
     offset = 1
@@ -105,7 +105,7 @@ def main():
         response = dnac_api.devices.get_device_list(offset=offset)
         offset += limit
         device_list.extend(response['response'])
-    logging.info('Collected the device list from Cisco DNA Center')
+    logging.info(' Collected the device list from Cisco DNA Center')
 
     # create device and AP inventory [{"hostname": "", "device_ip": "","device_id": "", "version": "", "device_family": "",
     #  "role": "", "site": "", "site_id": ""},...]
@@ -150,25 +150,25 @@ def main():
             device_details.update({'site_id': site_id})
             ap_inventory.append(device_details)
 
-    logging.info('Collected the device inventory from Cisco DNA Center')
+    logging.info(' Collected the device inventory from Cisco DNA Center')
 
     # save device inventory to json and yaml formatted files
     with open(LOCAL_INVENTORY_PATH + 'device_inventory.json', 'w') as f:
         f.write(json.dumps(device_inventory))
-    logging.info('Saved the device inventory to file "device_inventory.json"')
+    logging.info(' Saved the device inventory to file "device_inventory.json"')
 
     with open(LOCAL_INVENTORY_PATH + 'device_inventory.yaml', 'w') as f:
         f.write('device_inventory:\n' + yaml.dump(device_inventory, sort_keys=False))
-    logging.info('Saved the device inventory to file "device_inventory.yaml"')
+    logging.info(' Saved the device inventory to file "device_inventory.yaml"')
 
     # save ap inventory to json and yaml formatted files
     with open(LOCAL_INVENTORY_PATH + 'ap_inventory.json', 'w') as f:
         f.write(json.dumps(ap_inventory))
-    logging.info('Saved the device inventory to file "ap_inventory.json"')
+    logging.info(' Saved the device inventory to file "ap_inventory.json"')
 
     with open(LOCAL_INVENTORY_PATH + 'ap_inventory.yaml', 'w') as f:
         f.write('ap_inventory:\n' + yaml.dump(ap_inventory, sort_keys=False))
-    logging.info('Saved the device inventory to file "ap_inventory.yaml"')
+    logging.info(' Saved the device inventory to file "ap_inventory.yaml"')
 
     # retrieve the device image compliance state
     image_non_compliant_devices = []
@@ -179,19 +179,19 @@ def main():
         for item_device in device_inventory:
             if device_id == item_device['device_id']:
                 image_non_compliant_devices.append(item_device)
-    logging.info('Number of devices image non-compliant: ' + str(len(image_non_compliant_devices)))
-    logging.info('Image non-compliant devices: ')
+    logging.info(' Number of devices image non-compliant: ' + str(len(image_non_compliant_devices)))
+    logging.info(' Image non-compliant devices: ')
     for device in image_non_compliant_devices:
-        logging.info('    ' + device['hostname'] + ', Site Hierarchy: ' + device['site'])
+        logging.info('     ' + device['hostname'] + ', Site Hierarchy: ' + device['site'])
 
     # save non-compliant devices to json and yaml formatted files
     with open(LOCAL_INVENTORY_PATH + 'non_compliant_devices.json', 'w') as f:
         f.write(json.dumps(image_non_compliant_devices))
-    logging.info('Saved the image non-compliant device inventory to file "non_compliant_devices.json"')
+    logging.info(' Saved the image non-compliant device inventory to file "non_compliant_devices.json"')
 
     with open(LOCAL_INVENTORY_PATH + 'non_compliant_devices.yaml', 'w') as f:
         f.write('non_compliant:\n' + yaml.dump(image_non_compliant_devices, sort_keys=False))
-    logging.info('Saved the image non-compliant device inventory to file "non_compliant_devices.yaml"')
+    logging.info(' Saved the image non-compliant device inventory to file "non_compliant_devices.yaml"')
 
     # push all files to GitHub repo
 
@@ -217,13 +217,13 @@ def main():
             file_content = f.read()
         file_bytes = file_content.encode('ascii')
         base64_bytes = base64.b64encode(file_bytes)
-        logging.info('GitHub push for file: ' + filename)
+        logging.info(' GitHub push for file: ' + filename)
 
         # create a file and commit n push
         repo.create_file(filename, "committed from python_sdk", file_content)
 
     date_time = str(datetime.now().replace(microsecond=0))
-    logging.info('End of Application "inventory_collection_sdk.py" Run: ' + date_time)
+    logging.info(' End of Application "inventory_collection.py" Run: ' + date_time)
 
     return
 
