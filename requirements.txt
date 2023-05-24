@@ -1,0 +1,7 @@
+requests
+urllib3==1.26.9
+dnacentersdk==2.6.3
+python-dotenv
+PyYAML
+ansible
+PyGithub
