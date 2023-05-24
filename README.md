@@ -97,7 +97,7 @@ TASK [Include the new downloaded vars file] ************************************
 ok: [localhost]
 
 TASK [include_tasks] *********************************************************************************************************************************************************************************
-included: /Users/gzapodea/PythonCode/dnacenter_day_n/ansible/create_template_tasks.yaml for localhost
+included: /Users/gzapodea/PythonCode/dnacenter_day_n/ansible/version_template_tasks.yaml for localhost
 
 TASK [Print the CLI Template] ************************************************************************************************************************************************************************
 ok: [localhost] => {
