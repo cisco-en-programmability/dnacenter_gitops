@@ -1,0 +1,81 @@
+---
+  - name: Print the CLI Template
+    ansible.builtin.debug:
+      msg: "CLI Template name: {{ template_name }}"
+
+  - name: "Verify if existing project with the name: {{ project_name }}"
+    cisco.dnac.configuration_template_project_info:
+      dnac_host: "{{ dnac_host }}"
+      dnac_username: "{{ dnac_username }}"
+      dnac_password: "{{ dnac_password }}"
+      dnac_version: 2.3.5.3
+      dnac_verify: False
+      dnac_debug: False
+      name: "{{ project_name }}"
+    register: project_info
+
+  - name: Project not found
+    ansible.builtin.debug:
+      msg: "Project with the name: {{ project_name }}, not found"
+    when: project_info.dnac_response == []
+
+  - name: Get the project id
+    cisco.dnac.configuration_template_project_info:
+      dnac_host: "{{ dnac_host }}"
+      dnac_username: "{{ dnac_username }}"
+      dnac_password: "{{ dnac_password }}"
+      dnac_version: 2.3.5.3
+      dnac_verify: False
+      dnac_debug: False
+      name: "{{ project_name }}"
+    register: project_info
+
+  - name: Parse project id
+    set_fact:
+      project_id: "{{ project_info.dnac_response[0].id }}"
+
+  - name: Print project id
+    ansible.builtin.debug:
+      msg: "Project id is: {{ project_id }}"
+
+  - name: Get the project details
+    cisco.dnac.projects_details_info:
+      dnac_host: "{{ dnac_host }}"
+      dnac_username: "{{ dnac_username }}"
+      dnac_password: "{{ dnac_password }}"
+      dnac_version: 2.3.5.3
+      dnac_verify: False
+      dnac_debug: False
+      id: "{{ project_id }}"
+    register: project_details
+
+  - name: Select template
+    set_fact:
+      template_info: "{{ item }}"
+    loop: "{{ project_details.dnac_response.response[0].templates }}"
+    when: "item.name == template_name"
+
+  - name: Parse the template id
+    set_fact:
+      template_id: "{{ template_info.id }}"
+
+  - name: Print template id
+    ansible.builtin.debug:
+      msg: "Template id is: {{ template_id }}}"
+
+  - name: Commit template
+    cisco.dnac.configuration_template_version_create:
+      dnac_host: "{{ dnac_host }}"
+      dnac_username: "{{ dnac_username }}"
+      dnac_password: "{{ dnac_password }}"
+      dnac_version: 2.3.5.3
+      dnac_verify: False
+      dnac_debug: False
+      comments: Committed by
+      templateId: "{{ template_id }}"
+    register: commit_template
+
+  - name: Sleep for 5 seconds to commit template and continue with play
+    wait_for:
+      timeout: 5
+    delegate_to: localhost
