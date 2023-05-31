@@ -111,6 +111,8 @@ def main():
     #  "role": "", "site": "", "site_id": ""},...]
     device_inventory = []
     ap_inventory = []
+
+
     for device in device_list:
         # select which inventory to add the device to
         if device.family != "Unified AP":
